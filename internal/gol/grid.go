@@ -6,8 +6,8 @@ import (
 
 const (
 	alive  = ""
-	dead   = " "
-	cursor = ""
+	dead   = ""
+	cursor = "x"
 )
 
 type Grid struct {
@@ -90,7 +90,7 @@ func (g *Grid) CursorPosition() (int, int) {
 }
 
 func (g *Grid) Next() *Grid{
-	newGrid := NewGrid(g.Height, g.Width)
+	newGrid := NewGrid(g.Width, g.Height)
 
 	for x := range g.Width {
 		for y := range g.Height {
