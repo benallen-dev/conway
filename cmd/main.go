@@ -5,8 +5,8 @@ import (
 
 	"golang.org/x/term"
 
-	"github.com/benallen-dev/conway/internal/gol"
 	"github.com/benallen-dev/conway/internal/display"
+	"github.com/benallen-dev/conway/internal/gol"
 )
 
 var (
@@ -20,14 +20,22 @@ func main() {
 		panic(err)
 	}
 
-	width = width - 1 // Adds empty space to the right
+	width = width - 1   // Adds empty space to the right
 	height = height - 5 // Adds empty space to the bottom
 
 	grid := gol.NewGrid(width, height)
+
+	// Glider
+	// grid.SetCell(1, 2, true)
+	// grid.SetCell(2, 3, true)
+	// grid.SetCell(3, 1, true)
+	// grid.SetCell(3, 2, true)
+	// grid.SetCell(3, 3, true)
+
 	grid.RandomChange(int(0.2 * float64(width) * float64(height))) // randomly flip cells 0.2 * # of cells in grid
 
 	count := 0
-	
+
 	display.Init()
 	display.Draw(grid.String(), count)
 	time.Sleep(time.Duration(2) * time.Second) // Allow observer to see initial state
