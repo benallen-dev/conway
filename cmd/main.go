@@ -1,36 +1,17 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
 	"golang.org/x/term"
 
 	"github.com/benallen-dev/conway/internal/gol"
+	"github.com/benallen-dev/conway/internal/display"
 )
 
-func initDisplay() {
-	fmt.Print("\033[2J")
-	fmt.Print("\033[H\033[2J")
-
-	// hide cursor
-	fmt.Print("\033[?25l")
-}
-
-func restoreDisplay() {
-	// show cursor
-	fmt.Print("\033[?25h")
-}
-
-func display(grid *gol.Grid, count int) {
-	fmt.Printf("\033[0;0H")
-	fmt.Print(grid)
-	fmt.Printf("Tick: %d\n", count)
-}
-
 var (
-	interval = 516 // how often to update the display in milliseconds
-	tickrate = 1 // How many grid updates to do before displaying
+	interval = 17 // Milliseconds between output updates
+	tickrate = 1  // How many grid updates to do before displaying
 )
 
 func main() {
@@ -39,28 +20,26 @@ func main() {
 		panic(err)
 	}
 
-	// scaling
-	width = width - 2
-	height = height - 5
+	width = width - 1 // Adds empty space to the right
+	height = height - 5 // Adds empty space to the bottom
 
 	grid := gol.NewGrid(width, height)
-
-	// inital conditions
-	grid.SetCell(2, 1, true)
-	grid.SetCell(2, 2, true)
-	grid.SetCell(2, 3, true)
-
-	initDisplay()
+	grid.RandomChange(int(0.2 * float64(width) * float64(height))) // randomly flip cells 0.2 * # of cells in grid
 
 	count := 0
+	
+	display.Init()
+	display.Draw(grid.String(), count)
+	time.Sleep(time.Duration(2) * time.Second) // Allow observer to see initial state
 
-	// TODO: Use goroutine and channel to separate display from simulation
+	// TODO: Separate display from simulation
+	// TODO: Listen for SIGINT and restore display
 	for {
 		count = count + 1
-		display(grid, count)
+		display.Draw(grid.String(), count)
+
+		time.Sleep(time.Duration(interval) * time.Millisecond)
 
 		grid = grid.Tick(tickrate)
-	
-		time.Sleep(time.Duration(interval) * time.Millisecond)
 	}
 }
