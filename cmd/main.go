@@ -22,15 +22,15 @@ func restoreDisplay() {
 	fmt.Print("\033[?25h")
 }
 
-func display(grid *gol.Grid) {
+func display(grid *gol.Grid, count int) {
 	fmt.Printf("\033[0;0H")
 	fmt.Print(grid)
+	fmt.Printf("Tick: %d\n", count)
 }
 
 var (
-	interval = 16 // how often to update the display in milliseconds
-	tickrate = 50 // How many grid updates to do before displaying
-
+	interval = 516 // how often to update the display in milliseconds
+	tickrate = 1 // How many grid updates to do before displaying
 )
 
 func main() {
@@ -41,23 +41,25 @@ func main() {
 
 	// scaling
 	width = width - 2
-	height = height - 2
+	height = height - 5
 
 	grid := gol.NewGrid(width, height)
 
 	// inital conditions
-	grid.SetCell(3, 1, gol.Cell{Alive: true})
-	grid.SetCell(2, 2, gol.Cell{Alive: true})
-	grid.SetCell(1, 3, gol.Cell{Alive: true})
+	grid.SetCell(2, 1, true)
+	grid.SetCell(2, 2, true)
+	grid.SetCell(2, 3, true)
 
 	initDisplay()
 
+	count := 0
 
 	// TODO: Use goroutine and channel to separate display from simulation
 	for {
-		display(grid)
+		count = count + 1
+		display(grid, count)
 
-		grid.Tick(tickrate)
+		grid = grid.Tick(tickrate)
 	
 		time.Sleep(time.Duration(interval) * time.Millisecond)
 	}
